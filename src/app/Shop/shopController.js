@@ -330,8 +330,7 @@ exports.postModel = async function (req, res) {
         else return res.send(response(baseResponse.CLOTHES_SIZE_INVALID));
     }
 
-    let resultLocation = Date.now() + 'result.glb'
-    var userDir = './user'+userIdx+'/test.obj';
+    var filename = 'user' + userIdx+'.obj';
     var usermodel = ''
 
     // 파이썬으로 실행해서 결과값 가져오기
@@ -339,7 +338,7 @@ exports.postModel = async function (req, res) {
     var options = {
         mode: 'text',
         scriptPath: '',
-        args: [userDir, topFile, bottomFile, resultLocation,175]
+        args: [filename, topFile, bottomFile, resultLocation,175]
     };
     PythonShell.run('modeling.py', options, function (err, results) {
         if (err) {
@@ -348,7 +347,7 @@ exports.postModel = async function (req, res) {
         }
         console.log(results);
 
-        fs.readFile(resultLocation, async function (err, data) {
+        fs.readFile(filename, async function (err, data) {
             if (err) {
                 console.log(err.toString())
                 return res.send(response(baseResponse.MODEL_UPLOAD_ERROR));
@@ -366,7 +365,7 @@ exports.postModel = async function (req, res) {
 
             const params = {
                 Bucket: 'usermodel',
-                Key: resultLocation,
+                Key: filename,
                 Body: data
             };
             s3.upload(params, async function(err, data) {
