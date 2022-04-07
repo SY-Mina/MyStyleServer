@@ -330,6 +330,8 @@ exports.postModel = async function (req, res) {
         else return res.send(response(baseResponse.CLOTHES_SIZE_INVALID));
     }
 
+    let resultLocation = Date.now() + 'result.glb'
+    var userDir = './user'+userIdx+'/test.obj';
     var filename = 'user' + userIdx+'.obj';
     var usermodel = ''
 
@@ -347,7 +349,7 @@ exports.postModel = async function (req, res) {
         }
         console.log(results);
 
-        fs.readFile(filename, async function (err, data) {
+        fs.readFile(resultLocation, async function (err, data) {
             if (err) {
                 console.log(err.toString())
                 return res.send(response(baseResponse.MODEL_UPLOAD_ERROR));
@@ -365,7 +367,7 @@ exports.postModel = async function (req, res) {
 
             const params = {
                 Bucket: 'usermodel',
-                Key: filename,
+                Key: resultLocation,
                 Body: data
             };
             s3.upload(params, async function(err, data) {
